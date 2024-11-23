@@ -36,10 +36,19 @@ REST_FRAMEWORK = {
                                 'rest_framework.filters.SearchFilter'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 5,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
+REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://192.168.1.100",  
+]
 
 INSTALLED_APPS = [
+    'corsheaders',
     'core',
     'rest_framework',
     'django_filters',
@@ -52,6 +61,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

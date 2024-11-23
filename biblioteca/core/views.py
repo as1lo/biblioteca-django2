@@ -1,8 +1,8 @@
-from rest_framework import generics
-from .models import Livro, Categoria, Autor
-from .serializers import LivroSerializer, AutorSerializer, CategoriaSerializer
+from rest_framework import generics, permissions
+from .models import Livro, Categoria, Autor, Colecao
+from .serializers import LivroSerializer, AutorSerializer, CategoriaSerializer, ColecaoSerializer
 from django_filters import rest_framework as filters
-
+from .permissions import IsColecionador
 
 class LivroFilter(filters.FilterSet):
     titulo = filters.CharFilter(lookup_expr='icontains')
@@ -42,3 +42,17 @@ class AutorList(generics.ListCreateAPIView):
 class AutorDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
+
+
+class ColecaoListCreateView(generics.ListCreateAPIView):
+    queryset = Colecao.objects.all()
+    serializer_class = ColecaoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(colecionador=self.request.user)  # Atribui o usuário autenticado como colecionador.
+
+class ColecaoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Colecao.objects.all()
+    serializer_class = ColecaoSerializer
+    permission_classes = [permissions.IsAuthenticated, IsColecionador]
